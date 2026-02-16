@@ -6,7 +6,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 # ---------------- CONFIG ----------------
 
-st.set_page_config(page_title="Class 6 Science Worksheet", layout="centered")
+st.set_page_config(page_title="Class 6 Science Test", layout="centered")
 
 DATA_FILE = "students.json"
 
@@ -18,14 +18,6 @@ if not os.path.exists(DATA_FILE):
 
 with open(DATA_FILE, "r") as f:
     students = json.load(f)
-
-# ---------------- SOUNDS ----------------
-
-wrong_sound = """
-<audio autoplay>
-<source src="https://www.soundjay.com/buttons/sounds/button-10.mp3" type="audio/mp3">
-</audio>
-"""
 
 # ---------------- QUESTIONS ----------------
 
@@ -83,6 +75,8 @@ questions = [
 
 ]
 
+# ---------------- WRITING QUESTIONS ----------------
+
 writing_questions = [
 
 "Explain water cycle",
@@ -109,23 +103,23 @@ def create_certificate(name, score):
 
     story = []
 
-    story.append(Paragraph("<font size=30 color=blue><b>CERTIFICATE OF ACHIEVEMENT</b></font>", styles["Title"]))
+    story.append(Paragraph("<font size=32 color=blue><b>CERTIFICATE OF ACHIEVEMENT</b></font>", styles["Title"]))
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph(f"<font size=20>This is to certify that</font>", styles["Normal"]))
+    story.append(Paragraph("<font size=20>This certificate is proudly presented to</font>", styles["Normal"]))
 
     story.append(Spacer(1,10))
 
-    story.append(Paragraph(f"<font size=25 color=green><b>{name}</b></font>", styles["Title"]))
+    story.append(Paragraph(f"<font size=28 color=green><b>{name}</b></font>", styles["Title"]))
 
     story.append(Spacer(1,10))
 
-    story.append(Paragraph(f"<font size=20>has scored {score}/25 in Science Test</font>", styles["Normal"]))
+    story.append(Paragraph(f"<font size=20>For scoring <b>{score}/25</b> in Science Test</font>", styles["Normal"]))
 
     story.append(Spacer(1,30))
 
-    story.append(Paragraph("🎉 Excellent Work 🎉", styles["Title"]))
+    story.append(Paragraph("<font size=24 color=red>🏆 Excellent Performance 🏆</font>", styles["Title"]))
 
     doc.build(story)
 
@@ -133,7 +127,8 @@ def create_certificate(name, score):
 
 # ---------------- TITLE ----------------
 
-st.title("Class 6 Science Test")
+st.title("ANNUAL EXAMINATION 2026")
+st.header("Class 6 Science Test")
 
 name = st.text_input("Student Name")
 class_name = st.text_input("Class")
@@ -142,13 +137,11 @@ class_name = st.text_input("Class")
 
 if name in students:
 
-    st.error("Already attempted")
+    st.error("You have already attempted the test")
 
     st.stop()
 
-# ---------------- QUIZ ----------------
-
-score = 0
+# ---------------- QUESTIONS ----------------
 
 answers = []
 
@@ -160,29 +153,19 @@ for i,q in enumerate(questions):
 
     answers.append(ans)
 
-    if ans:
-
-        if ans == q[2]:
-
-            st.success("Correct")
-
-        else:
-
-            st.error("Wrong")
-
-            st.markdown(wrong_sound, unsafe_allow_html=True)
-
 # ---------------- WRITING ----------------
 
 st.header("Writing Section")
 
-for i,w in enumerate(writing_questions):
+for w in writing_questions:
 
-    st.text_area(w, height=100)
+    st.text_area(w, height=120)
 
 # ---------------- SUBMIT ----------------
 
-if st.button("Submit"):
+if st.button("Submit Test"):
+
+    score = 0
 
     for i,q in enumerate(questions):
 
@@ -198,11 +181,11 @@ if st.button("Submit"):
 
     st.balloons()
 
-    st.markdown(f"# 🎉 Your Score: {score}/25 🎉")
+    st.markdown(f"# 🎉 Your Score: {score} / 25 🎉")
 
-    st.markdown("## 🎁🎁 Congratulations 🎁🎁")
+    st.markdown("## 🎁 Congratulations 🎁")
 
-    file = create_certificate(name,score)
+    file = create_certificate(name, score)
 
     with open(file,"rb") as f:
 
@@ -212,8 +195,8 @@ if st.button("Submit"):
 
 st.sidebar.title("Teacher Dashboard")
 
-if st.sidebar.checkbox("Show"):
+if st.sidebar.checkbox("Show Results"):
 
     for s in students:
 
-        st.sidebar.write(s, students[s])
+        st.sidebar.write(f"{s} : {students[s]}/25")
