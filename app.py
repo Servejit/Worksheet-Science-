@@ -1,272 +1,219 @@
-# ---------------------------------------------------
-# INSTALL REQUIREMENTS:
-# pip install streamlit reportlab
-# ---------------------------------------------------
-
 import streamlit as st
 import json
 import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-import base64
-from datetime import datetime
 
-st.set_page_config(page_title="Quiz App", layout="wide")
+# ---------------- CONFIG ----------------
 
-# ---------------- FILES ----------------
+st.set_page_config(page_title="Class 6 Science Worksheet", layout="centered")
 
-USER_FILE = "users.json"
-RESULT_FILE = "results.json"
+DATA_FILE = "students.json"
 
-# create files if not exist
-if not os.path.exists(USER_FILE):
-    json.dump({}, open(USER_FILE, "w"))
+# ---------------- LOAD DATA ----------------
 
-if not os.path.exists(RESULT_FILE):
-    json.dump({}, open(RESULT_FILE, "w"))
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, "w") as f:
+        json.dump({}, f)
 
+with open(DATA_FILE, "r") as f:
+    students = json.load(f)
 
-# ---------------- LOAD SAVE ----------------
+# ---------------- SOUNDS ----------------
 
-def load_users():
-    return json.load(open(USER_FILE))
-
-
-def save_users(data):
-    json.dump(data, open(USER_FILE, "w"))
-
-
-def load_results():
-    return json.load(open(RESULT_FILE))
-
-
-def save_results(data):
-    json.dump(data, open(RESULT_FILE, "w"))
-
+wrong_sound = """
+<audio autoplay>
+<source src="https://www.soundjay.com/buttons/sounds/button-10.mp3" type="audio/mp3">
+</audio>
+"""
 
 # ---------------- QUESTIONS ----------------
 
 questions = [
 
-    {
-        "type": "mcq",
-        "question": "Capital of India?",
-        "options": ["Delhi", "Mumbai", "Kolkata", "Chennai"],
-        "answer": "Delhi"
-    },
+("Nickel is:", ["Magnetic", "Non Magnetic", "Liquid", "Gas"], "Magnetic"),
 
-    {
-        "type": "mcq",
-        "question": "2 + 2 = ?",
-        "options": ["3", "4", "5", "6"],
-        "answer": "4"
-    },
+("Magnetic strength is maximum at:", ["Centre", "Pole", "Side", "None"], "Pole"),
 
-    {
-        "type": "write",
-        "question": "Write 5 lines about yourself"
-    },
+("Rate of evaporation decreases when:", ["Area increases", "Area decreases", "Heat increases", "Wind increases"], "Area decreases"),
 
-    {
-        "type": "write",
-        "question": "Why do you want this gift?"
-    }
+("Water conservation done by:", ["Recycling", "Planting trees", "Stopping pollution", "All"], "All"),
+
+("Ultimate energy source:", ["Water", "Sun", "Coal", "Air"], "Sun"),
+
+("Fossils found in:", ["Igneous", "Sedimentary", "Metamorphic", "None"], "Sedimentary"),
+
+("Brightest planet:", ["Earth", "Venus", "Mars", "Mercury"], "Venus"),
+
+("Universe studied by:", ["Astronomer", "Doctor", "Engineer", "Pilot"], "Astronomer"),
+
+("Compass used for:", ["Direction", "Speed", "Distance", "Weight"], "Direction"),
+
+("Coal formed from:", ["Plants", "Animals", "Water", "Air"], "Plants"),
+
+("Magnet has poles:", ["1", "2", "3", "4"], "2"),
+
+("Like poles:", ["Attract", "Repel", "Neutral", "None"], "Repel"),
+
+("Unlike poles:", ["Repel", "Attract", "Neutral", "None"], "Attract"),
+
+("Water vapour change to water:", ["Condensation", "Evaporation", "Melting", "Freezing"], "Condensation"),
+
+("Water vapour rises due to:", ["Heat", "Cold", "Pressure", "None"], "Heat"),
+
+("Earth suitable due to:", ["Air", "Water", "Temperature", "All"], "All"),
+
+("Meteorites fall on:", ["Earth", "Moon", "Sun", "Mars"], "Earth"),
+
+("Artificial magnets used in:", ["Cranes", "Fans", "Lights", "Cars"], "Cranes"),
+
+("Transpiration is:", ["Water loss", "Water gain", "Heat loss", "Heat gain"], "Water loss"),
+
+("Water cycle includes:", ["Evaporation", "Condensation", "Rain", "All"], "All"),
+
+("Natural magnet:", ["Magnetite", "Iron", "Nickel", "Cobalt"], "Magnetite"),
+
+("Magnetic substance:", ["Iron", "Plastic", "Wood", "Paper"], "Iron"),
+
+("Planet gives light:", ["Sun", "Venus", "Mars", "None"], "None"),
+
+("Cloud formed by:", ["Condensation", "Evaporation", "Freezing", "Melting"], "Condensation"),
+
+("Energy from sun called:", ["Solar", "Wind", "Water", "Coal"], "Solar"),
 
 ]
 
+writing_questions = [
 
-# ---------------- SOUND ----------------
+"Explain water cycle",
 
-def play_sound():
+"What is magnet?",
 
-    sound = """
-    <audio autoplay>
-    <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mp3">
-    </audio>
-    """
+"Define evaporation",
 
-    st.markdown(sound, unsafe_allow_html=True)
+"Why earth suitable for life?",
 
+"Explain solar energy importance"
+
+]
 
 # ---------------- CERTIFICATE ----------------
 
 def create_certificate(name, score):
 
-    file = f"{name}_certificate.pdf"
+    filename = f"{name}_certificate.pdf"
+
+    doc = SimpleDocTemplate(filename)
 
     styles = getSampleStyleSheet()
 
-    doc = SimpleDocTemplate(file)
+    story = []
 
-    elements = []
+    story.append(Paragraph("<font size=30 color=blue><b>CERTIFICATE OF ACHIEVEMENT</b></font>", styles["Title"]))
 
-    elements.append(Paragraph("<h1>CERTIFICATE</h1>", styles["Heading1"]))
+    story.append(Spacer(1,20))
 
-    elements.append(Spacer(1,20))
+    story.append(Paragraph(f"<font size=20>This is to certify that</font>", styles["Normal"]))
 
-    elements.append(Paragraph(f"This is to certify that", styles["Normal"]))
+    story.append(Spacer(1,10))
 
-    elements.append(Paragraph(f"<b>{name}</b>", styles["Heading2"]))
+    story.append(Paragraph(f"<font size=25 color=green><b>{name}</b></font>", styles["Title"]))
 
-    elements.append(Paragraph(f"Score: {score}", styles["Heading3"]))
+    story.append(Spacer(1,10))
 
-    elements.append(Paragraph(f"Date: {datetime.now().date()}", styles["Normal"]))
+    story.append(Paragraph(f"<font size=20>has scored {score}/25 in Science Test</font>", styles["Normal"]))
 
-    doc.build(elements)
+    story.append(Spacer(1,30))
 
-    return file
+    story.append(Paragraph("🎉 Excellent Work 🎉", styles["Title"]))
 
+    doc.build(story)
 
-# ---------------- LOGIN ----------------
+    return filename
 
-st.title("🎓 Quiz App")
+# ---------------- TITLE ----------------
 
-menu = st.sidebar.selectbox("Menu", ["Student", "Teacher"])
+st.title("Class 6 Science Test")
 
+name = st.text_input("Student Name")
+class_name = st.text_input("Class")
 
-# =====================================================
-# STUDENT
-# =====================================================
+# ---------------- ONE ATTEMPT ----------------
 
-if menu == "Student":
+if name in students:
 
-    name = st.text_input("Enter Your Name")
+    st.error("Already attempted")
 
-    if st.button("Start Quiz"):
-
-        users = load_users()
-
-        if name in users:
-            st.error("❌ You already attempted")
-            st.stop()
-
-        users[name] = True
-        save_users(users)
-
-        st.session_state.name = name
-        st.session_state.q = 0
-        st.session_state.score = 0
-        st.session_state.answers = {}
-
-
+    st.stop()
 
 # ---------------- QUIZ ----------------
 
-if "name" in st.session_state:
+score = 0
 
-    qn = st.session_state.q
+answers = []
 
-    if qn < len(questions):
+for i,q in enumerate(questions):
 
-        q = questions[qn]
+    st.write(f"{i+1}. {q[0]}")
 
-        st.subheader(f"Question {qn+1}")
+    ans = st.radio("", q[1], key=i)
 
-        st.write(q["question"])
+    answers.append(ans)
 
+    if ans:
 
-        # MCQ
-        if q["type"] == "mcq":
+        if ans == q[2]:
 
-            ans = st.radio("Select", q["options"], key=qn)
-
-            if st.button("Next"):
-
-                if ans == q["answer"]:
-                    st.session_state.score += 1
-
-                st.session_state.q += 1
-                st.rerun()
-
-
-
-        # Writing
-        if q["type"] == "write":
-
-            text = st.text_area("Write here", key=qn)
-
-            if st.button("Next"):
-
-                st.session_state.answers[qn] = text
-                st.session_state.q += 1
-                st.rerun()
-
-
-
-    else:
-
-        # RESULT
-
-        score = st.session_state.score
-
-        st.balloons()
-
-        play_sound()
-
-        st.markdown(f"# 🎉 SCORE: {score}")
-
-        # Gifts
-
-        if score == len(questions):
-            gift = "🏆 Gold Gift"
-
-        elif score >= len(questions)//2:
-            gift = "🎁 Silver Gift"
+            st.success("Correct")
 
         else:
-            gift = "🍫 Chocolate"
 
-        st.markdown(f"# {gift}")
+            st.error("Wrong")
 
+            st.markdown(wrong_sound, unsafe_allow_html=True)
 
-        # Save result
+# ---------------- WRITING ----------------
 
-        results = load_results()
+st.header("Writing Section")
 
-        results[st.session_state.name] = score
+for i,w in enumerate(writing_questions):
 
-        save_results(results)
+    st.text_area(w, height=100)
 
+# ---------------- SUBMIT ----------------
 
-        # Certificate
+if st.button("Submit"):
 
-        file = create_certificate(st.session_state.name, score)
+    for i,q in enumerate(questions):
 
-        with open(file, "rb") as f:
+        if answers[i] == q[2]:
 
-            st.download_button(
+            score += 1
 
-                "Download Certificate",
+    students[name] = score
 
-                f,
+    with open(DATA_FILE,"w") as f:
 
-                file_name=file
+        json.dump(students,f)
 
-            )
+    st.balloons()
 
+    st.markdown(f"# 🎉 Your Score: {score}/25 🎉")
 
-        del st.session_state.name
+    st.markdown("## 🎁🎁 Congratulations 🎁🎁")
 
+    file = create_certificate(name,score)
 
+    with open(file,"rb") as f:
 
-# =====================================================
-# TEACHER
-# =====================================================
+        st.download_button("Download Certificate", f, file_name=file)
 
-if menu == "Teacher":
+# ---------------- TEACHER DASHBOARD ----------------
 
-    password = st.text_input("Password", type="password")
+st.sidebar.title("Teacher Dashboard")
 
-    if password == "admin123":
+if st.sidebar.checkbox("Show"):
 
-        st.header("📊 Live Dashboard")
+    for s in students:
 
-        results = load_results()
-
-        st.write(results)
-
-        st.dataframe(
-
-            [{"Name":k, "Score":v} for k,v in results.items()]
-        )
-
+        st.sidebar.write(s, students[s])
