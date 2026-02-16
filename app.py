@@ -1,257 +1,272 @@
 # ---------------------------------------------------
-# INSTALL
-# pip install streamlit pandas openpyxl reportlab
+# INSTALL REQUIREMENTS:
+# pip install streamlit reportlab
 # ---------------------------------------------------
 
 import streamlit as st
-import pandas as pd
+import json
 import os
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+import base64
 from datetime import datetime
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
 
-st.set_page_config(page_title="Science Worksheet", layout="wide")
+st.set_page_config(page_title="Quiz App", layout="wide")
 
-FILE="results.xlsx"
+# ---------------- FILES ----------------
 
-# ---------------------------------------------------
-# CREATE FILE
-# ---------------------------------------------------
+USER_FILE = "users.json"
+RESULT_FILE = "results.json"
 
-if not os.path.exists(FILE):
+# create files if not exist
+if not os.path.exists(USER_FILE):
+    json.dump({}, open(USER_FILE, "w"))
 
-    pd.DataFrame(columns=[
-
-    "Name","Class","Score","Time",
-
-    "Evaporation","Meteorites",
-
-    "Clouds","Magnets"
-
-    ]).to_excel(FILE,index=False)
+if not os.path.exists(RESULT_FILE):
+    json.dump({}, open(RESULT_FILE, "w"))
 
 
-data=pd.read_excel(FILE)
+# ---------------- LOAD SAVE ----------------
+
+def load_users():
+    return json.load(open(USER_FILE))
 
 
-# ---------------------------------------------------
-# CERTIFICATE
-# ---------------------------------------------------
+def save_users(data):
+    json.dump(data, open(USER_FILE, "w"))
 
-def create_certificate(name,student_class,score):
 
-    file=f"certificate_{name}.pdf"
+def load_results():
+    return json.load(open(RESULT_FILE))
 
-    c=canvas.Canvas(file,pagesize=A4)
 
-    c.setFont("Helvetica-Bold",30)
+def save_results(data):
+    json.dump(data, open(RESULT_FILE, "w"))
 
-    c.drawCentredString(300,750,"Certificate")
 
-    c.setFont("Helvetica",20)
+# ---------------- QUESTIONS ----------------
 
-    c.drawCentredString(300,650,name)
+questions = [
 
-    c.drawCentredString(300,600,f"Class: {student_class}")
+    {
+        "type": "mcq",
+        "question": "Capital of India?",
+        "options": ["Delhi", "Mumbai", "Kolkata", "Chennai"],
+        "answer": "Delhi"
+    },
 
-    c.drawCentredString(300,550,f"Score: {score}/10")
+    {
+        "type": "mcq",
+        "question": "2 + 2 = ?",
+        "options": ["3", "4", "5", "6"],
+        "answer": "4"
+    },
 
-    c.save()
+    {
+        "type": "write",
+        "question": "Write 5 lines about yourself"
+    },
+
+    {
+        "type": "write",
+        "question": "Why do you want this gift?"
+    }
+
+]
+
+
+# ---------------- SOUND ----------------
+
+def play_sound():
+
+    sound = """
+    <audio autoplay>
+    <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mp3">
+    </audio>
+    """
+
+    st.markdown(sound, unsafe_allow_html=True)
+
+
+# ---------------- CERTIFICATE ----------------
+
+def create_certificate(name, score):
+
+    file = f"{name}_certificate.pdf"
+
+    styles = getSampleStyleSheet()
+
+    doc = SimpleDocTemplate(file)
+
+    elements = []
+
+    elements.append(Paragraph("<h1>CERTIFICATE</h1>", styles["Heading1"]))
+
+    elements.append(Spacer(1,20))
+
+    elements.append(Paragraph(f"This is to certify that", styles["Normal"]))
+
+    elements.append(Paragraph(f"<b>{name}</b>", styles["Heading2"]))
+
+    elements.append(Paragraph(f"Score: {score}", styles["Heading3"]))
+
+    elements.append(Paragraph(f"Date: {datetime.now().date()}", styles["Normal"]))
+
+    doc.build(elements)
 
     return file
 
 
-# ---------------------------------------------------
-# MODE
-# ---------------------------------------------------
+# ---------------- LOGIN ----------------
 
-mode=st.sidebar.selectbox(
+st.title("🎓 Quiz App")
 
-"Mode",
-
-["Student","Teacher Dashboard"]
-
-)
-
-# ---------------------------------------------------
-# TEACHER
-# ---------------------------------------------------
-
-if mode=="Teacher Dashboard":
-
-    st.title("Teacher Dashboard")
-
-    st.dataframe(data,use_container_width=True)
-
-    st.download_button(
-
-    "Download Excel",
-
-    open(FILE,"rb"),
-
-    file_name="results.xlsx"
-
-    )
-
-    st.stop()
+menu = st.sidebar.selectbox("Menu", ["Student", "Teacher"])
 
 
-# ---------------------------------------------------
+# =====================================================
 # STUDENT
-# ---------------------------------------------------
+# =====================================================
 
-st.title("Science Worksheet")
+if menu == "Student":
 
-name=st.text_input("Name")
+    name = st.text_input("Enter Your Name")
 
-student_class=st.text_input("Class")
+    if st.button("Start Quiz"):
 
+        users = load_users()
 
-# ONE ATTEMPT
+        if name in users:
+            st.error("❌ You already attempted")
+            st.stop()
 
-if name in data["Name"].values:
+        users[name] = True
+        save_users(users)
 
-    st.error("You already attempted")
-
-    st.stop()
-
-
-# ---------------------------------------------------
-# OBJECTIVE
-# ---------------------------------------------------
-
-correct={
-
-"q1":"Poles",
-
-"q2":"Sedimentary",
-
-"q3":"Sun",
-
-"q4":"artificial",
-
-"q5":"transpiration",
-
-"q6":"compass"
-
-}
+        st.session_state.name = name
+        st.session_state.q = 0
+        st.session_state.score = 0
+        st.session_state.answers = {}
 
 
-st.header("Objective")
 
-q1=st.radio("Magnetic strength maximum at:",
+# ---------------- QUIZ ----------------
 
-["Centre","Poles","Corners","Same"])
+if "name" in st.session_state:
 
-q2=st.radio("Fossils found in:",
+    qn = st.session_state.q
 
-["Igneous","Sedimentary","Metamorphic","Any"])
+    if qn < len(questions):
 
-q3=st.radio("Energy source:",
+        q = questions[qn]
 
-["Water","Air","Fossil fuels","Sun"])
+        st.subheader(f"Question {qn+1}")
 
-q4=st.text_input("Horseshoe magnets are")
-
-q5=st.text_input("Loss of water through leaves")
-
-q6=st.text_input("Direction instrument")
+        st.write(q["question"])
 
 
-# ---------------------------------------------------
-# WRITING QUESTIONS
-# ---------------------------------------------------
+        # MCQ
+        if q["type"] == "mcq":
 
-st.header("Writing Questions")
+            ans = st.radio("Select", q["options"], key=qn)
 
-w1=st.text_area("What is evaporation?")
+            if st.button("Next"):
 
-w2=st.text_area("What are meteorites?")
+                if ans == q["answer"]:
+                    st.session_state.score += 1
 
-w3=st.text_area("How clouds are formed?")
-
-w4=st.text_area("Why natural magnets not used in cranes?")
-
-
-# ---------------------------------------------------
-# SUBMIT
-# ---------------------------------------------------
-
-if st.button("Submit"):
+                st.session_state.q += 1
+                st.rerun()
 
 
-    if name=="" or student_class=="":
 
-        st.error("Enter details")
+        # Writing
+        if q["type"] == "write":
+
+            text = st.text_area("Write here", key=qn)
+
+            if st.button("Next"):
+
+                st.session_state.answers[qn] = text
+                st.session_state.q += 1
+                st.rerun()
+
+
 
     else:
 
-
-        score=0
-
-        if q1==correct["q1"]:score+=1
-        if q2==correct["q2"]:score+=1
-        if q3==correct["q3"]:score+=1
-        if q4.lower()==correct["q4"]:score+=1
-        if q5.lower()==correct["q5"]:score+=1
-        if q6.lower()==correct["q6"]:score+=1
-
-
-        final=round(score/6*10,2)
-
-
-        # SAVE
-
-        new=pd.DataFrame({
-
-        "Name":[name],
-
-        "Class":[student_class],
-
-        "Score":[final],
-
-        "Time":[datetime.now()],
-
-        "Evaporation":[w1],
-
-        "Meteorites":[w2],
-
-        "Clouds":[w3],
-
-        "Magnets":[w4]
-
-        })
-
-
-        pd.concat([data,new]).to_excel(FILE,index=False)
-
-
         # RESULT
+
+        score = st.session_state.score
 
         st.balloons()
 
-        st.markdown(
+        play_sound()
 
-        f"<h1 style='text-align:center;color:green;font-size:80px;'>🎯 {final}/10</h1>",
+        st.markdown(f"# 🎉 SCORE: {score}")
 
-        unsafe_allow_html=True
+        # Gifts
 
+        if score == len(questions):
+            gift = "🏆 Gold Gift"
+
+        elif score >= len(questions)//2:
+            gift = "🎁 Silver Gift"
+
+        else:
+            gift = "🍫 Chocolate"
+
+        st.markdown(f"# {gift}")
+
+
+        # Save result
+
+        results = load_results()
+
+        results[st.session_state.name] = score
+
+        save_results(results)
+
+
+        # Certificate
+
+        file = create_certificate(st.session_state.name, score)
+
+        with open(file, "rb") as f:
+
+            st.download_button(
+
+                "Download Certificate",
+
+                f,
+
+                file_name=file
+
+            )
+
+
+        del st.session_state.name
+
+
+
+# =====================================================
+# TEACHER
+# =====================================================
+
+if menu == "Teacher":
+
+    password = st.text_input("Password", type="password")
+
+    if password == "admin123":
+
+        st.header("📊 Live Dashboard")
+
+        results = load_results()
+
+        st.write(results)
+
+        st.dataframe(
+
+            [{"Name":k, "Score":v} for k,v in results.items()]
         )
 
-
-        st.success("Saved")
-
-
-        # CERTIFICATE
-
-        cert=create_certificate(name,student_class,final)
-
-        st.download_button(
-
-        "Download Certificate",
-
-        open(cert,"rb"),
-
-        file_name=cert
-
-        )
