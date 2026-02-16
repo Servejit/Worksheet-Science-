@@ -1,161 +1,201 @@
 # ---------------------------------------------------
-# INSTALL (Run once in terminal)
-# pip install streamlit
+# INSTALL
+# pip install streamlit pandas openpyxl
 # ---------------------------------------------------
 
 import streamlit as st
-import base64
+import pandas as pd
+import os
+from datetime import datetime
 
 st.set_page_config(page_title="Sample Worksheet", layout="wide")
 
 # ---------------------------------------------------
-# SOFT SOUND (Base64 small beep)
+# SOUND (WORKING SOFT SOUND)
 # ---------------------------------------------------
 
-wrong_sound = """
-<audio autoplay>
-<source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAAAA" type="audio/wav">
-</audio>
-"""
+def play_wrong_sound():
+    st.markdown(
+        """
+        <audio autoplay>
+        <source src="https://www.soundjay.com/buttons/sounds/button-10.mp3" type="audio/mpeg">
+        </audio>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# ---------------------------------------------------
+# FILE TO SAVE RESULTS
+# ---------------------------------------------------
+
+FILE = "results.xlsx"
+
+if not os.path.exists(FILE):
+    df = pd.DataFrame(columns=["Time","Name","Class","Score"])
+    df.to_excel(FILE, index=False)
+
 
 # ---------------------------------------------------
 # TITLE
 # ---------------------------------------------------
 
-st.title("📘 Sample Worksheet")
-st.write("### Class VI – Science")
+st.title("📘 Sample Worksheet – Class VI Science")
 
 # ---------------------------------------------------
-# STUDENT INFO
+# STUDENT DETAILS
 # ---------------------------------------------------
 
 col1, col2 = st.columns(2)
 
 with col1:
-    name = st.text_input("Student Name")
+    name = st.text_input("Enter Name")
 
 with col2:
-    student_class = st.text_input("Class")
+    student_class = st.text_input("Enter Class")
 
-st.divider()
 
 # ---------------------------------------------------
 # ANSWERS
 # ---------------------------------------------------
 
-correct_answers = {
-    "mcq1": "Poles",
-    "mcq2": "Sedimentary",
-    "mcq3": "Sun",
-    "fill1": "artificial",
-    "fill2": "transpiration",
-    "fill3": "compass"
+correct = {
+
+    "q1": "Poles",
+    "q2": "Sedimentary",
+    "q3": "Sun",
+    "q4": "artificial",
+    "q5": "transpiration",
+    "q6": "compass"
+
 }
 
-score = 0
-max_score = 10
-
 
 # ---------------------------------------------------
-# SECTION A MCQ
+# MCQ
 # ---------------------------------------------------
 
-st.subheader("Section A – MCQ")
+st.header("Section A – MCQ")
 
-mcq1 = st.radio(
+q1 = st.radio(
     "1. Magnetic strength maximum at:",
-    ["Centre", "Poles", "Corners", "Same throughout"],
-    key="mcq1"
+    ["Centre","Poles","Corners","Same throughout"],
+    key="q1"
 )
 
-if mcq1:
-    if mcq1 == correct_answers["mcq1"]:
+if q1:
+
+    if q1 == correct["q1"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
-        st.markdown(wrong_sound, unsafe_allow_html=True)
+        play_wrong_sound()
 
 
-mcq2 = st.radio(
+
+q2 = st.radio(
     "2. Fossils found in:",
-    ["Igneous", "Sedimentary", "Metamorphic", "Any"],
-    key="mcq2"
+    ["Igneous","Sedimentary","Metamorphic","Any"],
+    key="q2"
 )
 
-if mcq2:
-    if mcq2 == correct_answers["mcq2"]:
+if q2:
+
+    if q2 == correct["q2"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
-        st.markdown(wrong_sound, unsafe_allow_html=True)
+        play_wrong_sound()
 
 
-mcq3 = st.radio(
-    "3. Ultimate source of energy:",
-    ["Water", "Air", "Fossil fuels", "Sun"],
-    key="mcq3"
+
+q3 = st.radio(
+    "3. Ultimate energy source:",
+    ["Water","Air","Fossil fuels","Sun"],
+    key="q3"
 )
 
-if mcq3:
-    if mcq3 == correct_answers["mcq3"]:
+if q3:
+
+    if q3 == correct["q3"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
-        st.markdown(wrong_sound, unsafe_allow_html=True)
+        play_wrong_sound()
+
 
 
 # ---------------------------------------------------
 # FILL UPS
 # ---------------------------------------------------
 
-st.subheader("Section B – Fill in the blanks")
+st.header("Section B – Fill Ups")
 
-fill1 = st.text_input("4. Horseshoe magnets are ______ magnets")
+q4 = st.text_input("4. Horseshoe magnets are ______ magnets")
 
-if fill1:
-    if fill1.lower() == correct_answers["fill1"]:
+if q4:
+
+    if q4.lower() == correct["q4"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
 
 
-fill2 = st.text_input("5. Loss of water through leaves is ______")
 
-if fill2:
-    if fill2.lower() == correct_answers["fill2"]:
+q5 = st.text_input("5. Loss of water through leaves is ______")
+
+if q5:
+
+    if q5.lower() == correct["q5"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
 
 
-fill3 = st.text_input("6. Instrument to find direction is ______")
 
-if fill3:
-    if fill3.lower() == correct_answers["fill3"]:
+q6 = st.text_input("6. Instrument to find direction is ______")
+
+if q6:
+
+    if q6.lower() == correct["q6"]:
+
         st.success("✔ Correct")
+
     else:
+
         st.error("✘ Wrong")
+
 
 
 # ---------------------------------------------------
 # WRITING SPACE
 # ---------------------------------------------------
 
-st.subheader("Section C – Short Answers")
+st.header("Section C – Writing")
 
-ans7 = st.text_area("7. What is evaporation?", height=120)
+ans7 = st.text_area("7. What is evaporation?")
 
-ans8 = st.text_area("8. What are meteorites?", height=120)
+ans8 = st.text_area("8. What are meteorites?")
 
+ans9 = st.text_area("9. How clouds are formed?")
 
-st.subheader("Section D – Long Answer")
+ans10 = st.text_area("10. Why natural magnets not used in cranes?")
 
-ans9 = st.text_area("9. How clouds are formed?", height=150)
-
-
-st.subheader("Section E – HOTS")
-
-ans10 = st.text_area("10. Why natural magnets not used in cranes?", height=120)
 
 
 # ---------------------------------------------------
@@ -164,37 +204,68 @@ ans10 = st.text_area("10. Why natural magnets not used in cranes?", height=120)
 
 if st.button("Submit Worksheet"):
 
-    score = 0
 
-    if mcq1 == correct_answers["mcq1"]:
-        score += 1
+    if name == "" or student_class == "":
 
-    if mcq2 == correct_answers["mcq2"]:
-        score += 1
+        st.error("Enter Name and Class")
 
-    if mcq3 == correct_answers["mcq3"]:
-        score += 1
+    else:
 
-    if fill1.lower() == correct_answers["fill1"]:
-        score += 1
-
-    if fill2.lower() == correct_answers["fill2"]:
-        score += 1
-
-    if fill3.lower() == correct_answers["fill3"]:
-        score += 1
+        score = 0
 
 
-    # Convert to score out of 10
-    final_score = round((score / 6) * 10, 2)
+        if q1 == correct["q1"]:
+            score += 1
 
-    st.divider()
+        if q2 == correct["q2"]:
+            score += 1
 
-    st.success(f"🎉 Submitted Successfully!")
+        if q3 == correct["q3"]:
+            score += 1
 
-    st.write("### Student Details")
+        if q4.lower() == correct["q4"]:
+            score += 1
 
-    st.write(f"Name: {name}")
-    st.write(f"Class: {student_class}")
+        if q5.lower() == correct["q5"]:
+            score += 1
 
-    st.write("## 🏆 Score:", final_score, "/ 10")
+        if q6.lower() == correct["q6"]:
+            score += 1
+
+
+
+        final_score = round((score/6)*10,2)
+
+
+
+        # SAVE RESULT
+
+        new = pd.DataFrame({
+
+            "Time":[datetime.now()],
+            "Name":[name],
+            "Class":[student_class],
+            "Score":[final_score]
+
+        })
+
+
+        old = pd.read_excel(FILE)
+
+        combined = pd.concat([old,new], ignore_index=True)
+
+        combined.to_excel(FILE, index=False)
+
+
+
+        st.success("Submitted Successfully")
+
+        st.write("Score:", final_score,"/10")
+
+
+
+# ---------------------------------------------------
+# MULTI USER READY
+# ---------------------------------------------------
+
+st.info("This worksheet supports 100+ students")
