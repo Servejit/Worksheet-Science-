@@ -127,7 +127,7 @@ def create_certificate(name, score):
 
 # ---------------- TITLE ----------------
 
-st.title("ANNUAL EXAMINATION 2026")
+st.title("SAMPLE WORKSHEET 2026")
 st.header("Class 6 Science Test")
 
 name = st.text_input("Student Name")
