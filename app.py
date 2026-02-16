@@ -1,271 +1,247 @@
 # ---------------------------------------------------
 # INSTALL
-# pip install streamlit pandas openpyxl
+# pip install streamlit pandas openpyxl reportlab
 # ---------------------------------------------------
 
 import streamlit as st
 import pandas as pd
 import os
 from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
 
-st.set_page_config(page_title="Sample Worksheet", layout="wide")
-
-# ---------------------------------------------------
-# SOUND (WORKING SOFT SOUND)
-# ---------------------------------------------------
-
-def play_wrong_sound():
-    st.markdown(
-        """
-        <audio autoplay>
-        <source src="https://www.soundjay.com/buttons/sounds/button-10.mp3" type="audio/mpeg">
-        </audio>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# ---------------------------------------------------
-# FILE TO SAVE RESULTS
-# ---------------------------------------------------
+st.set_page_config(page_title="Science Worksheet", layout="wide")
 
 FILE = "results.xlsx"
 
+# ---------------------------------------------------
+# CREATE FILE
+# ---------------------------------------------------
+
 if not os.path.exists(FILE):
-    df = pd.DataFrame(columns=["Time","Name","Class","Score"])
-    df.to_excel(FILE, index=False)
+
+    pd.DataFrame(columns=["Name","Class","Score","Time"]).to_excel(FILE,index=False)
 
 
 # ---------------------------------------------------
-# TITLE
+# LOAD DATA
 # ---------------------------------------------------
 
-st.title("📘 Sample Worksheet – Class VI Science")
-
-# ---------------------------------------------------
-# STUDENT DETAILS
-# ---------------------------------------------------
-
-col1, col2 = st.columns(2)
-
-with col1:
-    name = st.text_input("Enter Name")
-
-with col2:
-    student_class = st.text_input("Enter Class")
+data = pd.read_excel(FILE)
 
 
 # ---------------------------------------------------
-# ANSWERS
+# CERTIFICATE FUNCTION
 # ---------------------------------------------------
 
-correct = {
+def create_certificate(name, student_class, score):
 
-    "q1": "Poles",
-    "q2": "Sedimentary",
-    "q3": "Sun",
-    "q4": "artificial",
-    "q5": "transpiration",
-    "q6": "compass"
+    file_name = f"certificate_{name}.pdf"
+
+    c = canvas.Canvas(file_name, pagesize=A4)
+
+    c.setFont("Helvetica-Bold", 30)
+    c.drawCentredString(300,750,"Certificate of Achievement")
+
+    c.setFont("Helvetica",18)
+
+    c.drawCentredString(300,650,f"This is to certify that")
+
+    c.setFont("Helvetica-Bold",22)
+    c.drawCentredString(300,600,name)
+
+    c.setFont("Helvetica",18)
+    c.drawCentredString(300,550,f"Class: {student_class}")
+
+    c.drawCentredString(300,500,f"Score: {score} / 10")
+
+    c.drawCentredString(300,400,"Excellent Performance 🎉")
+
+    c.save()
+
+    return file_name
+
+
+# ---------------------------------------------------
+# TEACHER DASHBOARD
+# ---------------------------------------------------
+
+mode = st.sidebar.selectbox(
+
+"Select Mode",
+
+["Student","Teacher Dashboard"]
+
+)
+
+# ---------------------------------------------------
+# TEACHER MODE
+# ---------------------------------------------------
+
+if mode=="Teacher Dashboard":
+
+    st.title("📊 Teacher Dashboard")
+
+    st.dataframe(data,use_container_width=True)
+
+    st.download_button(
+
+    "Download Results Excel",
+
+    open(FILE,"rb"),
+
+    file_name="Results.xlsx"
+
+    )
+
+    st.stop()
+
+
+# ---------------------------------------------------
+# STUDENT MODE
+# ---------------------------------------------------
+
+st.title("📘 Science Worksheet")
+
+name = st.text_input("Enter Name")
+
+student_class = st.text_input("Enter Class")
+
+
+# ---------------------------------------------------
+# CHECK ATTEMPT
+# ---------------------------------------------------
+
+if name in data["Name"].values:
+
+    st.error("❌ You already attempted")
+
+    st.stop()
+
+
+# ---------------------------------------------------
+# QUESTIONS
+# ---------------------------------------------------
+
+correct={
+
+"q1":"Poles",
+"q2":"Sedimentary",
+"q3":"Sun",
+"q4":"artificial",
+"q5":"transpiration",
+"q6":"compass"
 
 }
 
+score=0
+
+
+q1=st.radio("Magnetic strength maximum at:",
+
+["Centre","Poles","Corners","Same"])
+
+q2=st.radio("Fossils found in:",
+
+["Igneous","Sedimentary","Metamorphic","Any"])
+
+q3=st.radio("Energy source:",
+
+["Water","Air","Fossil fuels","Sun"])
+
+
+q4=st.text_input("Horseshoe magnets are")
+
+q5=st.text_input("Loss of water through leaves")
+
+q6=st.text_input("Direction instrument")
+
 
 # ---------------------------------------------------
-# MCQ
+# SUBMIT
 # ---------------------------------------------------
 
-st.header("Section A – MCQ")
+if st.button("Submit"):
 
-q1 = st.radio(
-    "1. Magnetic strength maximum at:",
-    ["Centre","Poles","Corners","Same throughout"],
-    key="q1"
-)
 
-if q1:
+    if name=="" or student_class=="":
 
-    if q1 == correct["q1"]:
-
-        st.success("✔ Correct")
+        st.error("Enter details")
 
     else:
 
-        st.error("✘ Wrong")
-        play_wrong_sound()
 
+        score=0
 
+        if q1==correct["q1"]: score+=1
+        if q2==correct["q2"]: score+=1
+        if q3==correct["q3"]: score+=1
+        if q4.lower()==correct["q4"]: score+=1
+        if q5.lower()==correct["q5"]: score+=1
+        if q6.lower()==correct["q6"]: score+=1
 
-q2 = st.radio(
-    "2. Fossils found in:",
-    ["Igneous","Sedimentary","Metamorphic","Any"],
-    key="q2"
-)
 
-if q2:
+        final=round(score/6*10,2)
 
-    if q2 == correct["q2"]:
 
-        st.success("✔ Correct")
+        # SAVE
 
-    else:
+        new=pd.DataFrame({
 
-        st.error("✘ Wrong")
-        play_wrong_sound()
-
-
-
-q3 = st.radio(
-    "3. Ultimate energy source:",
-    ["Water","Air","Fossil fuels","Sun"],
-    key="q3"
-)
-
-if q3:
-
-    if q3 == correct["q3"]:
-
-        st.success("✔ Correct")
-
-    else:
-
-        st.error("✘ Wrong")
-        play_wrong_sound()
-
-
-
-# ---------------------------------------------------
-# FILL UPS
-# ---------------------------------------------------
-
-st.header("Section B – Fill Ups")
-
-q4 = st.text_input("4. Horseshoe magnets are ______ magnets")
-
-if q4:
-
-    if q4.lower() == correct["q4"]:
-
-        st.success("✔ Correct")
-
-    else:
-
-        st.error("✘ Wrong")
-
-
-
-q5 = st.text_input("5. Loss of water through leaves is ______")
-
-if q5:
-
-    if q5.lower() == correct["q5"]:
-
-        st.success("✔ Correct")
-
-    else:
-
-        st.error("✘ Wrong")
-
-
-
-q6 = st.text_input("6. Instrument to find direction is ______")
-
-if q6:
-
-    if q6.lower() == correct["q6"]:
-
-        st.success("✔ Correct")
-
-    else:
-
-        st.error("✘ Wrong")
-
-
-
-# ---------------------------------------------------
-# WRITING SPACE
-# ---------------------------------------------------
-
-st.header("Section C – Writing")
-
-ans7 = st.text_area("7. What is evaporation?")
-
-ans8 = st.text_area("8. What are meteorites?")
-
-ans9 = st.text_area("9. How clouds are formed?")
-
-ans10 = st.text_area("10. Why natural magnets not used in cranes?")
-
-
-
-# ---------------------------------------------------
-# SUBMIT BUTTON
-# ---------------------------------------------------
-
-if st.button("Submit Worksheet"):
-
-
-    if name == "" or student_class == "":
-
-        st.error("Enter Name and Class")
-
-    else:
-
-        score = 0
-
-
-        if q1 == correct["q1"]:
-            score += 1
-
-        if q2 == correct["q2"]:
-            score += 1
-
-        if q3 == correct["q3"]:
-            score += 1
-
-        if q4.lower() == correct["q4"]:
-            score += 1
-
-        if q5.lower() == correct["q5"]:
-            score += 1
-
-        if q6.lower() == correct["q6"]:
-            score += 1
-
-
-
-        final_score = round((score/6)*10,2)
-
-
-
-        # SAVE RESULT
-
-        new = pd.DataFrame({
-
-            "Time":[datetime.now()],
-            "Name":[name],
-            "Class":[student_class],
-            "Score":[final_score]
+        "Name":[name],
+        "Class":[student_class],
+        "Score":[final],
+        "Time":[datetime.now()]
 
         })
 
-
-        old = pd.read_excel(FILE)
-
-        combined = pd.concat([old,new], ignore_index=True)
-
-        combined.to_excel(FILE, index=False)
+        pd.concat([data,new]).to_excel(FILE,index=False)
 
 
+        # RESULT DISPLAY
 
-        st.success("Submitted Successfully")
+        st.balloons()
 
-        st.write("Score:", final_score,"/10")
+        st.markdown(
+
+        f"<h1 style='text-align:center;color:green;font-size:80px;'>🎯 {final}/10</h1>",
+
+        unsafe_allow_html=True
+
+        )
 
 
+        # GIFTS
 
-# ---------------------------------------------------
-# MULTI USER READY
-# ---------------------------------------------------
+        if final==10:
 
-st.info("This worksheet supports 100+ students")
+            st.success("🏆 Gift: Gold Trophy")
+
+        elif final>=8:
+
+            st.success("⭐ Gift: Star Medal")
+
+        elif final>=6:
+
+            st.success("🍫 Gift: Chocolate")
+
+        else:
+
+            st.success("😊 Gift: Keep Practicing")
+
+
+        # CERTIFICATE
+
+        cert=create_certificate(name,student_class,final)
+
+        with open(cert,"rb") as f:
+
+            st.download_button(
+
+            "🏆 Download Certificate",
+
+            f,
+
+            file_name=cert
+
+            )
