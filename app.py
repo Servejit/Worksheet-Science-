@@ -4,13 +4,11 @@ import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-# ---------------- CONFIG ----------------
+st.set_page_config(page_title="Class 8 Science Exam", layout="centered")
 
-st.set_page_config(page_title="Class 6 Science Test", layout="centered")
+DATA_FILE = "class8_students.json"
 
-DATA_FILE = "students.json"
-
-# ---------------- LOAD DATA ----------------
+# ---------- Load Data ----------
 
 if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w") as f:
@@ -19,129 +17,131 @@ if not os.path.exists(DATA_FILE):
 with open(DATA_FILE, "r") as f:
     students = json.load(f)
 
-# ---------------- QUESTIONS ----------------
+# ---------- 25 MCQs ----------
 
 questions = [
 
-("Nickel is:", ["Magnetic", "Non Magnetic", "Liquid", "Gas"], "Magnetic"),
+("Female loses reproductive ability at 45–50:", ["Menarche","Menstruation","Menopause","Peripause"], "Menopause"),
 
-("Magnetic strength is maximum at:", ["Centre", "Pole", "Side", "None"], "Pole"),
+("Endocrine chemical messengers:", ["Hormones","Sperms","Eggs","None"], "Hormones"),
 
-("Rate of evaporation decreases when:", ["Area increases", "Area decreases", "Heat increases", "Wind increases"], "Area decreases"),
+("Atom loses electron becomes:", ["Negative","Positive","Neutral","None"], "Positive"),
 
-("Water conservation done by:", ["Recycling", "Planting trees", "Stopping pollution", "All"], "All"),
+("Good conductor has many:", ["Bound","Free","Floating","Flying"], "Free"),
 
-("Ultimate energy source:", ["Water", "Sun", "Coal", "Air"], "Sun"),
+("Blurring distant vision:", ["Hypermetropia","Myopia","Astigmatism","Night blindness"], "Myopia"),
 
-("Fossils found in:", ["Igneous", "Sedimentary", "Metamorphic", "None"], "Sedimentary"),
+("Reflection from rough surface:", ["Regular","Multiple","Diffused","None"], "Diffused"),
 
-("Brightest planet:", ["Earth", "Venus", "Mars", "Mercury"], "Venus"),
+("Earthquake origin point:", ["Epicentre","Focus","Fault","None"], "Focus"),
 
-("Universe studied by:", ["Astronomer", "Doctor", "Engineer", "Pilot"], "Astronomer"),
+("Lightning rod material:", ["Bakelite","Plastic","Wood","Copper"], "Copper"),
 
-("Compass used for:", ["Direction", "Speed", "Distance", "Weight"], "Direction"),
+("Puberty to adulthood period:", ["Adolescence","Childhood","Adult","None"], "Adolescence"),
 
-("Coal formed from:", ["Plants", "Animals", "Water", "Air"], "Plants"),
+("Like charges:", ["Attract","Repel","Both","None"], "Repel"),
 
-("Magnet has poles:", ["1", "2", "3", "4"], "2"),
+("Image formed on:", ["Cornea","Retina","Lens","None"], "Retina"),
 
-("Like poles:", ["Attract", "Repel", "Neutral", "None"], "Repel"),
+("Earthquake scale:", ["Richter","Barometer","Meter","None"], "Richter"),
 
-("Unlike poles:", ["Repel", "Attract", "Neutral", "None"], "Attract"),
+("First menstrual flow:", ["Menarche","Menopause","Ovulation","None"], "Menarche"),
 
-("Water vapour change to water:", ["Condensation", "Evaporation", "Melting", "Freezing"], "Condensation"),
+("Normal cycle:", ["7","10","20","28"], "28"),
 
-("Water vapour rises due to:", ["Heat", "Cold", "Pressure", "None"], "Heat"),
+("Oestrogen produced by:", ["Testes","Pituitary","Pancreas","Ovaries"], "Ovaries"),
 
-("Earth suitable due to:", ["Air", "Water", "Temperature", "All"], "All"),
+("Not natural calamity:", ["Earthquake","Flood","Tsunami","Deforestation"], "Deforestation"),
 
-("Meteorites fall on:", ["Earth", "Moon", "Sun", "Mars"], "Earth"),
+("Magnitude measured by:", ["Barometer","Manometer","Richter","None"], "Richter"),
 
-("Artificial magnets used in:", ["Cranes", "Fans", "Lights", "Cars"], "Cranes"),
+("Point above focus:", ["Plate","Fault","Focus","Epicentre"], "Epicentre"),
 
-("Transpiration is:", ["Water loss", "Water gain", "Heat loss", "Heat gain"], "Water loss"),
+("Master gland:", ["Pituitary","Thyroid","Pancreas","None"], "Pituitary"),
 
-("Water cycle includes:", ["Evaporation", "Condensation", "Rain", "All"], "All"),
+("Growth hormone gland:", ["Thyroid","Pituitary","Adrenal","None"], "Pituitary"),
 
-("Natural magnet:", ["Magnetite", "Iron", "Nickel", "Cobalt"], "Magnetite"),
+("Fight flight hormone:", ["Adrenaline","Insulin","Thyroxine","None"], "Adrenaline"),
 
-("Magnetic substance:", ["Iron", "Plastic", "Wood", "Paper"], "Iron"),
+("Secondary sexual characteristics:", ["Hormones","Cells","Bones","None"], "Hormones"),
 
-("Planet gives light:", ["Sun", "Venus", "Mars", "None"], "None"),
+("Electrolysis is:", ["Chemical reaction","Physical change","Both","None"], "Chemical reaction"),
 
-("Cloud formed by:", ["Condensation", "Evaporation", "Freezing", "Melting"], "Condensation"),
+("Night blindness cause:", ["Vitamin A deficiency","Vitamin C","Vitamin D","None"], "Vitamin A deficiency"),
 
-("Energy from sun called:", ["Solar", "Wind", "Water", "Coal"], "Solar"),
+("Lightning safety:", ["Stay indoors","Stand tree","Use lift","None"], "Stay indoors"),
 
 ]
 
-# ---------------- WRITING QUESTIONS ----------------
+# ---------- Writing Questions ----------
 
 writing_questions = [
 
-"Explain water cycle",
+"What is adolescence?",
 
-"What is magnet?",
+"Define electrolysis.",
 
-"Define evaporation",
+"What is myopia?",
 
-"Why earth suitable for life?",
+"What is tsunami?",
 
-"Explain solar energy importance"
+"Explain endocrine system."
 
 ]
 
-# ---------------- CERTIFICATE ----------------
+# ---------- Certificate ----------
 
 def create_certificate(name, score):
 
-    filename = f"{name}_certificate.pdf"
-
-    doc = SimpleDocTemplate(filename)
+    filename = f"{name}_Class8_Certificate.pdf"
 
     styles = getSampleStyleSheet()
 
+    doc = SimpleDocTemplate(filename)
+
     story = []
 
-    story.append(Paragraph("<font size=32 color=blue><b>CERTIFICATE OF ACHIEVEMENT</b></font>", styles["Title"]))
-
-    story.append(Spacer(1,20))
-
-    story.append(Paragraph("<font size=20>This certificate is proudly presented to</font>", styles["Normal"]))
-
-    story.append(Spacer(1,10))
-
-    story.append(Paragraph(f"<font size=28 color=green><b>{name}</b></font>", styles["Title"]))
-
-    story.append(Spacer(1,10))
-
-    story.append(Paragraph(f"<font size=20>For scoring <b>{score}/25</b> in Science Test</font>", styles["Normal"]))
+    story.append(Paragraph("<font size=34 color=darkblue><b>🏆 CERTIFICATE OF ACHIEVEMENT 🏆</b></font>", styles["Title"]))
 
     story.append(Spacer(1,30))
 
-    story.append(Paragraph("<font size=24 color=red>🏆 Excellent Performance 🏆</font>", styles["Title"]))
+    story.append(Paragraph("<font size=22>This certificate is proudly awarded to</font>", styles["Normal"]))
+
+    story.append(Spacer(1,20))
+
+    story.append(Paragraph(f"<font size=30 color=green><b>{name}</b></font>", styles["Title"]))
+
+    story.append(Spacer(1,20))
+
+    story.append(Paragraph(f"<font size=22>For scoring <b>{score}/25</b></font>", styles["Normal"]))
+
+    story.append(Spacer(1,20))
+
+    story.append(Paragraph("<font size=24 color=red>🌟 Excellent Performance 🌟</font>", styles["Title"]))
+
+    story.append(Spacer(1,20))
+
+    story.append(Paragraph("<font size=18>Class VIII Science Annual Exam 2026</font>", styles["Normal"]))
 
     doc.build(story)
 
     return filename
 
-# ---------------- TITLE ----------------
+# ---------- UI ----------
 
 st.title("SAMPLE WORKSHEET 2026")
-st.header("Class 6 Science Test")
+st.header("Class VIII Science")
 
 name = st.text_input("Student Name")
 class_name = st.text_input("Class")
 
-# ---------------- ONE ATTEMPT ----------------
-
 if name in students:
 
-    st.error("You have already attempted the test")
+    st.error("You already attempted exam")
 
     st.stop()
 
-# ---------------- QUESTIONS ----------------
+# ---------- MCQs ----------
 
 answers = []
 
@@ -153,7 +153,7 @@ for i,q in enumerate(questions):
 
     answers.append(ans)
 
-# ---------------- WRITING ----------------
+# ---------- Writing ----------
 
 st.header("Writing Section")
 
@@ -161,9 +161,9 @@ for w in writing_questions:
 
     st.text_area(w, height=120)
 
-# ---------------- SUBMIT ----------------
+# ---------- Submit ----------
 
-if st.button("Submit Test"):
+if st.button("Submit Exam"):
 
     score = 0
 
@@ -181,9 +181,7 @@ if st.button("Submit Test"):
 
     st.balloons()
 
-    st.markdown(f"# 🎉 Your Score: {score} / 25 🎉")
-
-    st.markdown("## 🎁 Congratulations 🎁")
+    st.markdown(f"# 🎉 SCORE: {score} / 25 🎉")
 
     file = create_certificate(name, score)
 
@@ -191,7 +189,7 @@ if st.button("Submit Test"):
 
         st.download_button("Download Certificate", f, file_name=file)
 
-# ---------------- TEACHER DASHBOARD ----------------
+# ---------- Teacher Dashboard ----------
 
 st.sidebar.title("Teacher Dashboard")
 
