@@ -1,5 +1,3 @@
-Worksheet Streamlit 8th Science 
-
 import streamlit as st
 import json
 import os
