@@ -1,14 +1,16 @@
+Worksheet Streamlit 8th Science 
+
 import streamlit as st
 import json
 import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-st.set_page_config(page_title="Class 7 Science Exam", layout="centered")
+st.set_page_config(page_title="Class 8 Science Exam", layout="centered")
 
-DATA_FILE = "class7_students.json"
+DATA_FILE = "class8_students.json"
 
-# ---------------- LOAD DATA ----------------
+# ---------- Load Data ----------
 
 if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w") as f:
@@ -17,83 +19,83 @@ if not os.path.exists(DATA_FILE):
 with open(DATA_FILE, "r") as f:
     students = json.load(f)
 
-# ---------------- 25 MCQs ----------------
+# ---------- 25 MCQs ----------
 
 questions = [
 
-("Strawberries propagate through:", ["Grafting","Tissue culture","Layering","Stolon"], "Stolon"),
+("Female loses reproductive ability at 45–50:", ["Menarche","Menstruation","Menopause","Peripause"], "Menopause"),
 
-("Flowers with only stamens:", ["Bisexual","Unisexual","Homosexual","None"], "Unisexual"),
+("Endocrine chemical messengers:", ["Hormones","Sperms","Eggs","None"], "Hormones"),
 
-("SI unit of speed:", ["km/h","km/s","m/h","m/s"], "m/s"),
+("Atom loses electron becomes:", ["Negative","Positive","Neutral","None"], "Positive"),
 
-("Crawling baby motion:", ["Uniform","Circular","Non-uniform","Periodic"], "Non-uniform"),
+("Good conductor has many:", ["Bound","Free","Floating","Flying"], "Free"),
 
-("Automatic electric safety device:", ["Fuse","MCB","Relay","Maglev"], "MCB"),
+("Blurring distant vision:", ["Hypermetropia","Myopia","Astigmatism","Night blindness"], "Myopia"),
 
-("Potential difference unit:", ["Joule","Newton","Volt","Watt"], "Volt"),
+("Reflection from rough surface:", ["Regular","Multiple","Diffused","None"], "Diffused"),
 
-("Concave lens forms:", ["Real","Virtual","Both","None"], "Virtual"),
+("Earthquake origin point:", ["Epicentre","Focus","Fault","None"], "Focus"),
 
-("Solar cooker uses mirror:", ["Plane","Convex","Concave","Any"], "Concave"),
+("Lightning rod material:", ["Bakelite","Plastic","Wood","Copper"], "Copper"),
 
-("Opposition to current:", ["Voltage","Resistance","Speed","Power"], "Resistance"),
+("Puberty to adulthood period:", ["Adolescence","Childhood","Adult","None"], "Adolescence"),
 
-("Diverging lens:", ["Convex","Concave","Plane","None"], "Concave"),
+("Like charges:", ["Attract","Repel","Both","None"], "Repel"),
 
-("Same flower pollination:", ["Cross","Self","Artificial","None"], "Self"),
+("Image formed on:", ["Cornea","Retina","Lens","None"], "Retina"),
 
-("Electric start stop device:", ["Switch","Volt","Ampere","None"], "Switch"),
+("Earthquake scale:", ["Richter","Barometer","Meter","None"], "Richter"),
 
-("Plane mirror image:", ["Virtual erect","Real erect","Virtual inverted","Real inverted"], "Virtual erect"),
+("First menstrual flow:", ["Menarche","Menopause","Ovulation","None"], "Menarche"),
 
-("Mirror showing lateral inversion:", ["Plane","Convex","Concave","All"], "All"),
+("Normal cycle:", ["7","10","20","28"], "28"),
 
-("Real image formed by:", ["Concave mirror","Plane mirror","Convex mirror","None"], "Concave mirror"),
+("Oestrogen produced by:", ["Testes","Pituitary","Pancreas","Ovaries"], "Ovaries"),
 
-("Female gamete part:", ["Ovary","Style","Ovule","Sepal"], "Ovule"),
+("Not natural calamity:", ["Earthquake","Flood","Tsunami","Deforestation"], "Deforestation"),
 
-("Pollen tube grows in:", ["Ovary","Style","Anther","Sepal"], "Style"),
+("Magnitude measured by:", ["Barometer","Manometer","Richter","None"], "Richter"),
 
-("Pollen found in:", ["Stigma","Anther","Ovary","Style"], "Anther"),
+("Point above focus:", ["Plate","Fault","Focus","Epicentre"], "Epicentre"),
 
-("Transfer pollen called:", ["Fertilisation","Germination","Pollination","Reproduction"], "Pollination"),
+("Master gland:", ["Pituitary","Thyroid","Pancreas","None"], "Pituitary"),
 
-("Pollen received by:", ["Ovary","Anther","Stigma","Sepal"], "Stigma"),
+("Growth hormone gland:", ["Thyroid","Pituitary","Adrenal","None"], "Pituitary"),
 
-("Fuse used for:", ["Safety","Light","Heat","None"], "Safety"),
+("Fight flight hormone:", ["Adrenaline","Insulin","Thyroxine","None"], "Adrenaline"),
 
-("Electromagnet used in:", ["Crane","Fan","Bulb","Switch"], "Crane"),
+("Secondary sexual characteristics:", ["Hormones","Cells","Bones","None"], "Hormones"),
 
-("Rear view mirror:", ["Convex","Concave","Plane","None"], "Convex"),
+("Electrolysis is:", ["Chemical reaction","Physical change","Both","None"], "Chemical reaction"),
 
-("Speed formula:", ["Distance/time","Time/distance","Distance×time","None"], "Distance/time"),
+("Night blindness cause:", ["Vitamin A deficiency","Vitamin C","Vitamin D","None"], "Vitamin A deficiency"),
 
-("Reproduction modes:", ["2","3","4","5"], "2"),
+("Lightning safety:", ["Stay indoors","Stand tree","Use lift","None"], "Stay indoors"),
 
 ]
 
-# ---------------- WRITING QUESTIONS ----------------
+# ---------- Writing Questions ----------
 
 writing_questions = [
 
-"What is reproduction? Name its types.",
+"What is adolescence?",
 
-"Define speed and formula.",
+"Define electrolysis.",
 
-"What is electric circuit?",
+"What is myopia?",
 
-"Explain pollination types.",
+"What is tsunami?",
 
-"Explain reflection of light."
+"Explain endocrine system."
 
 ]
 
-# ---------------- CERTIFICATE ----------------
+# ---------- Certificate ----------
 
 def create_certificate(name, score):
 
-    filename = f"{name}_Class7_Certificate.pdf"
+    filename = f"{name}_Class8_Certificate.pdf"
 
     styles = getSampleStyleSheet()
 
@@ -121,16 +123,16 @@ def create_certificate(name, score):
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph("<font size=18>Class VII Science Annual Exam 2026</font>", styles["Normal"]))
+    story.append(Paragraph("<font size=18>Class VIII Science Annual Exam 2026</font>", styles["Normal"]))
 
     doc.build(story)
 
     return filename
 
-# ---------------- UI ----------------
+# ---------- UI ----------
 
 st.title("SAMPLE WORKSHEET 2026")
-st.header("Class VII Science")
+st.header("Class VIII Science")
 
 name = st.text_input("Student Name")
 class_name = st.text_input("Class")
@@ -141,7 +143,7 @@ if name in students:
 
     st.stop()
 
-# ---------------- QUESTIONS ----------------
+# ---------- MCQs ----------
 
 answers = []
 
@@ -153,7 +155,7 @@ for i,q in enumerate(questions):
 
     answers.append(ans)
 
-# ---------------- WRITING ----------------
+# ---------- Writing ----------
 
 st.header("Writing Section")
 
@@ -161,7 +163,7 @@ for w in writing_questions:
 
     st.text_area(w, height=120)
 
-# ---------------- SUBMIT ----------------
+# ---------- Submit ----------
 
 if st.button("Submit Exam"):
 
@@ -183,15 +185,13 @@ if st.button("Submit Exam"):
 
     st.markdown(f"# 🎉 SCORE: {score} / 25 🎉")
 
-    st.markdown("## 🎁 Congratulations 🎁")
-
     file = create_certificate(name, score)
 
     with open(file,"rb") as f:
 
         st.download_button("Download Certificate", f, file_name=file)
 
-# ---------------- TEACHER DASHBOARD ----------------
+# ---------- Teacher Dashboard ----------
 
 st.sidebar.title("Teacher Dashboard")
 
