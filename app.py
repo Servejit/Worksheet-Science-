@@ -4,9 +4,9 @@ import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-st.set_page_config(page_title="Class 10 Light Exam", layout="centered")
+st.set_page_config(page_title="Class 8 Science Exam", layout="centered")
 
-DATA_FILE = "class10_light_students.json"
+DATA_FILE = "class8_students.json"
 
 # ---------- Load Data ----------
 
@@ -17,109 +17,82 @@ if not os.path.exists(DATA_FILE):
 with open(DATA_FILE, "r") as f:
     students = json.load(f)
 
-# ---------- MCQs WITHOUT ANSWERS ----------
 
-questions = [
+# ---------- Questions ONLY ----------
 
-("Image formed by plane mirror is:", ["Real","Virtual","Both","None"]),
+questions_only = [
 
-("Concave mirror is:", ["Converging","Diverging","Both","None"]),
+"Ovaries, Testes, Hormones, Thyroid",
 
-("Convex mirror is:", ["Converging","Diverging","Both","None"]),
+"Copper, Plastic, Aluminium, Iron",
 
-("Unit of focal length:", ["cm","m","Both","None"]),
+"Myopia, Hypermetropia, Astigmatism, Retina",
 
-("Mirror formula is:", ["1/f = 1/v + 1/u","f = uv","v = u","None"]),
+"Focus, Epicentre, Fault, Richter",
 
-("SI unit of distance:", ["cm","mm","m","None"]),
+"Adrenaline, Insulin, Thyroxine, Blood",
 
-("Centre of mirror is:", ["Pole","Focus","Centre of curvature","None"]),
+"Reflection, Refraction, Diffusion, Dispersion",
 
-("Middle point of mirror:", ["Pole","Focus","Radius","None"]),
+"Earthquake, Flood, Tsunami, Pollution",
 
-("Parallel rays meet at:", ["Focus","Pole","Centre","None"]),
+"Menarche, Menopause, Adolescence, Childhood",
 
-("Convex mirror image always:", ["Real","Virtual","Both","None"]),
+"Pituitary, Thyroid, Pancreas, Neuron",
 
-("Concave mirror image can be:", ["Real","Virtual","Both","None"]),
+"Retina, Cornea, Lens, Skin",
 
-("Focal length is half of:", ["Diameter","Radius","Pole","None"]),
+"Lightning, Earthquake, Cyclone, Growth",
 
-("Image distance is represented by:", ["u","v","f","None"]),
+"Positive charge, Negative charge, Neutral, Current",
 
-("Object distance is represented by:", ["u","v","f","None"]),
+"Vitamin A, Vitamin C, Vitamin D, Oxygen",
 
-("Focal length represented by:", ["u","v","f","None"]),
+"Adolescence, Puberty, Childhood, Atom",
 
-("Real image is:", ["Inverted","Erect","Both","None"]),
-
-("Virtual image is:", ["Inverted","Erect","Both","None"]),
-
-("Convex mirror used in:", ["Rear view mirror","Torch","Microscope","None"]),
-
-("Concave mirror used in:", ["Torch","Rear view mirror","Both","None"]),
-
-("Mirror obeys:", ["Reflection","Refraction","Both","None"]),
-
-("Angle of incidence equals:", ["Angle of reflection","Angle of refraction","Both","None"]),
-
-("Mirror formula works for:", ["All mirrors","Only concave","Only convex","None"]),
-
-("Pole lies on:", ["Mirror surface","Behind mirror","Front","None"]),
-
-("Focus lies between:", ["Pole and centre","Centre and infinity","None","None"]),
-
-("Convex mirror forms image:", ["Small","Large","Same","None"]),
+"Copper, Wood, Iron, Aluminium"
 
 ]
 
-# ---------- ANSWER KEY (Hidden) ----------
 
-answer_key = [
+# ---------- Hidden Answer Key ----------
 
-"Virtual",
-"Converging",
-"Diverging",
-"Both",
-"1/f = 1/v + 1/u",
-"m",
-"Centre of curvature",
-"Pole",
-"Focus",
-"Virtual",
-"Both",
-"Radius",
-"v",
-"u",
-"f",
-"Inverted",
-"Erect",
-"Rear view mirror",
-"Torch",
-"Reflection",
-"Angle of reflection",
-"All mirrors",
-"Mirror surface",
-"Pole and centre",
-"Small"
+def get_answers():
 
-]
+    return [
 
-# ---------- Numericals ----------
+"Hormones",
 
-numericals = [
+"Plastic",
 
-"Object distance = -20 cm, focal length = -10 cm. Find image distance.",
+"Retina",
 
-"Image distance = 30 cm, focal length = 15 cm. Find object distance.",
+"Richter",
 
-"Object distance = -30 cm, image distance = -60 cm. Find focal length.",
+"Blood",
 
-"Focal length = 20 cm, object distance = -40 cm. Find image distance.",
+"Diffusion",
 
-"Image distance = 40 cm, focal length = 10 cm. Find object distance."
+"Pollution",
+
+"Childhood",
+
+"Neuron",
+
+"Skin",
+
+"Growth",
+
+"Current",
+
+"Oxygen",
+
+"Atom",
+
+"Wood"
 
 ]
+
 
 # ---------- Certificate ----------
 
@@ -128,56 +101,67 @@ def create_certificate(name, score):
     filename = f"{name}_Certificate.pdf"
 
     styles = getSampleStyleSheet()
+
     doc = SimpleDocTemplate(filename)
 
     story = []
 
     story.append(Paragraph("<b>CERTIFICATE OF ACHIEVEMENT</b>", styles["Title"]))
+
     story.append(Spacer(1,20))
-    story.append(Paragraph(f"Student: {name}", styles["Normal"]))
-    story.append(Paragraph(f"Score: {score}/25", styles["Normal"]))
+
+    story.append(Paragraph(f"Awarded to <b>{name}</b>", styles["Normal"]))
+
+    story.append(Spacer(1,20))
+
+    story.append(Paragraph(f"Score: <b>{score}/15</b>", styles["Normal"]))
 
     doc.build(story)
 
     return filename
 
+
+
 # ---------- UI ----------
 
-st.title("Class 10 Science – Light")
+st.title("SCIENCE WORKSHEET 2026")
 
 name = st.text_input("Student Name")
 
 if name in students:
 
-    st.error("Already attempted")
+    st.error("Already Attempted")
 
     st.stop()
 
-answers = []
 
-for i,q in enumerate(questions):
+# ---------- Questions ----------
 
-    st.write(f"{i+1}. {q[0]}")
+student_answers = []
 
-    ans = st.radio("", q[1], key=i)
+for i,q in enumerate(questions_only):
 
-    answers.append(ans)
+    st.write(f"{i+1}. {q}")
 
-st.header("Numericals")
+    ans = st.text_input("Odd One Out:", key=i)
 
-for n in numericals:
+    st.text_input("Reason:", key=f"r{i}")
 
-    st.text_area(n)
+    student_answers.append(ans)
+
+
 
 # ---------- Submit ----------
 
 if st.button("Submit"):
 
+    answers = get_answers()
+
     score = 0
 
-    for i in range(len(answer_key)):
+    for i in range(15):
 
-        if answers[i] == answer_key[i]:
+        if student_answers[i].strip().lower() == answers[i].lower():
 
             score += 1
 
@@ -187,19 +171,21 @@ if st.button("Submit"):
 
         json.dump(students,f)
 
-    st.success(f"Score: {score}/25")
+    st.success(f"Score: {score}/15")
 
     file = create_certificate(name, score)
 
     with open(file,"rb") as f:
 
-        st.download_button("Download Certificate", f, file_name=file)
+        st.download_button("Download Certificate", f)
 
-# ---------- Teacher ----------
 
-st.sidebar.title("Teacher")
 
-if st.sidebar.checkbox("Results"):
+# ---------- Teacher Dashboard ----------
+
+st.sidebar.title("Teacher Dashboard")
+
+if st.sidebar.checkbox("Show Results"):
 
     for s in students:
 
