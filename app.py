@@ -17,83 +17,88 @@ if not os.path.exists(DATA_FILE):
 with open(DATA_FILE, "r") as f:
     students = json.load(f)
 
-# ---------- 25 MCQs ----------
 
-questions = [
+# ---------- Questions ONLY ----------
 
-("Female loses reproductive ability at 45–50:", ["Menarche","Menstruation","Menopause","Peripause"], "Menopause"),
+questions_only = [
 
-("Endocrine chemical messengers:", ["Hormones","Sperms","Eggs","None"], "Hormones"),
+"Ovaries, Testes, Hormones, Thyroid",
 
-("Atom loses electron becomes:", ["Negative","Positive","Neutral","None"], "Positive"),
+"Copper, Plastic, Aluminium, Iron",
 
-("Good conductor has many:", ["Bound","Free","Floating","Flying"], "Free"),
+"Myopia, Hypermetropia, Astigmatism, Retina",
 
-("Blurring distant vision:", ["Hypermetropia","Myopia","Astigmatism","Night blindness"], "Myopia"),
+"Focus, Epicentre, Fault, Richter",
 
-("Reflection from rough surface:", ["Regular","Multiple","Diffused","None"], "Diffused"),
+"Adrenaline, Insulin, Thyroxine, Blood",
 
-("Earthquake origin point:", ["Epicentre","Focus","Fault","None"], "Focus"),
+"Reflection, Refraction, Diffusion, Dispersion",
 
-("Lightning rod material:", ["Bakelite","Plastic","Wood","Copper"], "Copper"),
+"Earthquake, Flood, Tsunami, Pollution",
 
-("Puberty to adulthood period:", ["Adolescence","Childhood","Adult","None"], "Adolescence"),
+"Menarche, Menopause, Adolescence, Childhood",
 
-("Like charges:", ["Attract","Repel","Both","None"], "Repel"),
+"Pituitary, Thyroid, Pancreas, Neuron",
 
-("Image formed on:", ["Cornea","Retina","Lens","None"], "Retina"),
+"Retina, Cornea, Lens, Skin",
 
-("Earthquake scale:", ["Richter","Barometer","Meter","None"], "Richter"),
+"Lightning, Earthquake, Cyclone, Growth",
 
-("First menstrual flow:", ["Menarche","Menopause","Ovulation","None"], "Menarche"),
+"Positive charge, Negative charge, Neutral, Current",
 
-("Normal cycle:", ["7","10","20","28"], "28"),
+"Vitamin A, Vitamin C, Vitamin D, Oxygen",
 
-("Oestrogen produced by:", ["Testes","Pituitary","Pancreas","Ovaries"], "Ovaries"),
+"Adolescence, Puberty, Childhood, Atom",
 
-("Not natural calamity:", ["Earthquake","Flood","Tsunami","Deforestation"], "Deforestation"),
-
-("Magnitude measured by:", ["Barometer","Manometer","Richter","None"], "Richter"),
-
-("Point above focus:", ["Plate","Fault","Focus","Epicentre"], "Epicentre"),
-
-("Master gland:", ["Pituitary","Thyroid","Pancreas","None"], "Pituitary"),
-
-("Growth hormone gland:", ["Thyroid","Pituitary","Adrenal","None"], "Pituitary"),
-
-("Fight flight hormone:", ["Adrenaline","Insulin","Thyroxine","None"], "Adrenaline"),
-
-("Secondary sexual characteristics:", ["Hormones","Cells","Bones","None"], "Hormones"),
-
-("Electrolysis is:", ["Chemical reaction","Physical change","Both","None"], "Chemical reaction"),
-
-("Night blindness cause:", ["Vitamin A deficiency","Vitamin C","Vitamin D","None"], "Vitamin A deficiency"),
-
-("Lightning safety:", ["Stay indoors","Stand tree","Use lift","None"], "Stay indoors"),
+"Copper, Wood, Iron, Aluminium"
 
 ]
 
-# ---------- Writing Questions ----------
 
-writing_questions = [
+# ---------- Hidden Answer Key ----------
 
-"What is adolescence?",
+def get_answers():
 
-"Define electrolysis.",
+    return [
 
-"What is myopia?",
+"Hormones",
 
-"What is tsunami?",
+"Plastic",
 
-"Explain endocrine system."
+"Retina",
+
+"Richter",
+
+"Blood",
+
+"Diffusion",
+
+"Pollution",
+
+"Childhood",
+
+"Neuron",
+
+"Skin",
+
+"Growth",
+
+"Current",
+
+"Oxygen",
+
+"Atom",
+
+"Wood"
 
 ]
+
 
 # ---------- Certificate ----------
 
 def create_certificate(name, score):
 
-    filename = f"{name}_Class8_Certificate.pdf"
+    filename = f"{name}_Certificate.pdf"
 
     styles = getSampleStyleSheet()
 
@@ -101,75 +106,62 @@ def create_certificate(name, score):
 
     story = []
 
-    story.append(Paragraph("<font size=34 color=darkblue><b>🏆 CERTIFICATE OF ACHIEVEMENT 🏆</b></font>", styles["Title"]))
-
-    story.append(Spacer(1,30))
-
-    story.append(Paragraph("<font size=22>This certificate is proudly awarded to</font>", styles["Normal"]))
+    story.append(Paragraph("<b>CERTIFICATE OF ACHIEVEMENT</b>", styles["Title"]))
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph(f"<font size=30 color=green><b>{name}</b></font>", styles["Title"]))
+    story.append(Paragraph(f"Awarded to <b>{name}</b>", styles["Normal"]))
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph(f"<font size=22>For scoring <b>{score}/25</b></font>", styles["Normal"]))
-
-    story.append(Spacer(1,20))
-
-    story.append(Paragraph("<font size=24 color=red>🌟 Excellent Performance 🌟</font>", styles["Title"]))
-
-    story.append(Spacer(1,20))
-
-    story.append(Paragraph("<font size=18>Class VIII Science Annual Exam 2026</font>", styles["Normal"]))
+    story.append(Paragraph(f"Score: <b>{score}/15</b>", styles["Normal"]))
 
     doc.build(story)
 
     return filename
 
+
+
 # ---------- UI ----------
 
-st.title("SAMPLE WORKSHEET 2026")
-st.header("Class VIII Science")
+st.title("SCIENCE WORKSHEET 2026")
 
 name = st.text_input("Student Name")
-class_name = st.text_input("Class")
 
 if name in students:
 
-    st.error("You already attempted exam")
+    st.error("Already Attempted")
 
     st.stop()
 
-# ---------- MCQs ----------
 
-answers = []
+# ---------- Questions ----------
 
-for i,q in enumerate(questions):
+student_answers = []
 
-    st.write(f"{i+1}. {q[0]}")
+for i,q in enumerate(questions_only):
 
-    ans = st.radio("", q[1], key=i)
+    st.write(f"{i+1}. {q}")
 
-    answers.append(ans)
+    ans = st.text_input("Odd One Out:", key=i)
 
-# ---------- Writing ----------
+    st.text_input("Reason:", key=f"r{i}")
 
-st.header("Writing Section")
+    student_answers.append(ans)
 
-for w in writing_questions:
 
-    st.text_area(w, height=120)
 
 # ---------- Submit ----------
 
-if st.button("Submit Exam"):
+if st.button("Submit"):
+
+    answers = get_answers()
 
     score = 0
 
-    for i,q in enumerate(questions):
+    for i in range(15):
 
-        if answers[i] == q[2]:
+        if student_answers[i].strip().lower() == answers[i].lower():
 
             score += 1
 
@@ -179,15 +171,15 @@ if st.button("Submit Exam"):
 
         json.dump(students,f)
 
-    st.balloons()
-
-    st.markdown(f"# 🎉 SCORE: {score} / 25 🎉")
+    st.success(f"Score: {score}/15")
 
     file = create_certificate(name, score)
 
     with open(file,"rb") as f:
 
-        st.download_button("Download Certificate", f, file_name=file)
+        st.download_button("Download Certificate", f)
+
+
 
 # ---------- Teacher Dashboard ----------
 
@@ -197,4 +189,4 @@ if st.sidebar.checkbox("Show Results"):
 
     for s in students:
 
-        st.sidebar.write(f"{s} : {students[s]}/25")
+        st.sidebar.write(s, students[s])
