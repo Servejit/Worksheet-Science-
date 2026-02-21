@@ -4,11 +4,11 @@ import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
-st.set_page_config(page_title="Class 8 Science Exam", layout="centered")
+st.set_page_config(page_title="Class 7 Science Worksheet", layout="centered")
 
-DATA_FILE = "class8_students.json"
+DATA_FILE = "class7_students.json"
 
-# ---------- Load Data ----------
+# ---------------- LOAD DATA ----------------
 
 if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w") as f:
@@ -18,87 +18,87 @@ with open(DATA_FILE, "r") as f:
     students = json.load(f)
 
 
-# ---------- Questions ONLY ----------
+# ---------------- QUESTIONS ----------------
 
 questions_only = [
 
-"Ovaries, Testes, Hormones, Thyroid",
+"Stolon, Grafting, Tissue culture, Speed",
 
-"Copper, Plastic, Aluminium, Iron",
+"Stamen, Ovule, Style, Fuse",
 
-"Myopia, Hypermetropia, Astigmatism, Retina",
+"m/s, Volt, Ampere, Distance",
 
-"Focus, Epicentre, Fault, Richter",
+"Uniform motion, Circular motion, Non-uniform motion, Pollination",
 
-"Adrenaline, Insulin, Thyroxine, Blood",
+"Fuse, MCB, Switch, Ovary",
 
-"Reflection, Refraction, Diffusion, Dispersion",
+"Volt, Resistance, Speed, Style",
 
-"Earthquake, Flood, Tsunami, Pollution",
+"Concave lens, Convex lens, Plane mirror, Ovule",
 
-"Menarche, Menopause, Adolescence, Childhood",
+"Plane mirror, Concave mirror, Convex mirror, Pollination",
 
-"Pituitary, Thyroid, Pancreas, Neuron",
+"Resistance, Voltage, Current, Ovary",
 
-"Retina, Cornea, Lens, Skin",
+"Convex mirror, Concave mirror, Plane mirror, Speed",
 
-"Lightning, Earthquake, Cyclone, Growth",
+"Self pollination, Cross pollination, Fertilisation, Fuse",
 
-"Positive charge, Negative charge, Neutral, Current",
+"Switch, MCB, Fuse, Ovule",
 
-"Vitamin A, Vitamin C, Vitamin D, Oxygen",
+"Virtual image, Real image, Resistance, Inverted image",
 
-"Adolescence, Puberty, Childhood, Atom",
+"Concave mirror, Convex mirror, Plane mirror, Ovule",
 
-"Copper, Wood, Iron, Aluminium"
+"Pollination, Fertilisation, Germination, Fuse"
 
 ]
 
 
-# ---------- Hidden Answer Key ----------
+# ---------------- HIDDEN ANSWERS ----------------
 
 def get_answers():
 
     return [
 
-"Hormones",
+"Speed",
 
-"Plastic",
+"Fuse",
 
-"Retina",
+"Distance",
 
-"Richter",
+"Pollination",
 
-"Blood",
+"Ovary",
 
-"Diffusion",
+"Style",
 
-"Pollution",
+"Ovule",
 
-"Childhood",
+"Pollination",
 
-"Neuron",
+"Ovary",
 
-"Skin",
+"Speed",
 
-"Growth",
+"Fuse",
 
-"Current",
+"Ovule",
 
-"Oxygen",
+"Resistance",
 
-"Atom",
+"Ovule",
 
-"Wood"
+"Fuse"
 
 ]
 
 
-# ---------- Certificate ----------
+# ---------------- CERTIFICATE ----------------
 
 def create_certificate(name, score):
 
-    filename = f"{name}_Certificate.pdf"
+    filename = f"{name}_Class7_Certificate.pdf"
 
     styles = getSampleStyleSheet()
 
@@ -106,38 +106,45 @@ def create_certificate(name, score):
 
     story = []
 
-    story.append(Paragraph("<b>CERTIFICATE OF ACHIEVEMENT</b>", styles["Title"]))
+    story.append(Paragraph("<font size=34><b>CERTIFICATE OF ACHIEVEMENT</b></font>", styles["Title"]))
+
+    story.append(Spacer(1,30))
+
+    story.append(Paragraph(f"<font size=24>This is awarded to <b>{name}</b></font>", styles["Normal"]))
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph(f"Awarded to <b>{name}</b>", styles["Normal"]))
+    story.append(Paragraph(f"<font size=22>Score: {score}/15</font>", styles["Normal"]))
 
     story.append(Spacer(1,20))
 
-    story.append(Paragraph(f"Score: <b>{score}/15</b>", styles["Normal"]))
+    story.append(Paragraph("<font size=18>Class VII Science Worksheet 2026</font>", styles["Normal"]))
 
     doc.build(story)
 
     return filename
 
 
-
-# ---------- UI ----------
+# ---------------- UI ----------------
 
 st.title("SCIENCE WORKSHEET 2026")
+st.header("Class VII")
 
 name = st.text_input("Student Name")
+class_name = st.text_input("Class")
 
 if name in students:
 
-    st.error("Already Attempted")
+    st.error("You already attempted exam")
 
     st.stop()
 
 
-# ---------- Questions ----------
+# ---------------- QUESTIONS DISPLAY ----------------
 
 student_answers = []
+
+st.header("Odd One Out")
 
 for i,q in enumerate(questions_only):
 
@@ -145,25 +152,36 @@ for i,q in enumerate(questions_only):
 
     ans = st.text_input("Odd One Out:", key=i)
 
-    st.text_input("Reason:", key=f"r{i}")
+    st.text_input("Reason:", key=f"reason{i}")
 
     student_answers.append(ans)
 
+    st.write("")
 
 
-# ---------- Submit ----------
+# ---------------- SUBMIT ----------------
 
-if st.button("Submit"):
+if st.button("Submit Exam"):
 
-    answers = get_answers()
+    correct_answers = get_answers()
 
     score = 0
 
-    for i in range(15):
+    wrong_list = []
 
-        if student_answers[i].strip().lower() == answers[i].lower():
+    for i in range(len(correct_answers)):
+
+        student = student_answers[i].strip()
+        correct = correct_answers[i]
+
+        if student.lower() == correct.lower():
 
             score += 1
+
+        else:
+
+            wrong_list.append((questions_only[i], student, correct))
+
 
     students[name] = score
 
@@ -171,17 +189,44 @@ if st.button("Submit"):
 
         json.dump(students,f)
 
-    st.success(f"Score: {score}/15")
+
+    st.balloons()
+
+    st.markdown(f"# 🎉 SCORE: {score} / 15 🎉")
+
+
+    # -------- REVIEW SECTION --------
+
+    if wrong_list:
+
+        st.error("Review Your Mistakes")
+
+        for item in wrong_list:
+
+            st.write(f"Question: {item[0]}")
+
+            st.write(f"❌ Your Answer: {item[1]}")
+
+            st.write(f"✅ Correct Answer: {item[2]}")
+
+            st.write("---")
+
+    else:
+
+        st.success("Perfect Score! All Correct")
+
+
+    # -------- CERTIFICATE --------
 
     file = create_certificate(name, score)
 
     with open(file,"rb") as f:
 
-        st.download_button("Download Certificate", f)
+        st.download_button("Download Certificate", f, file_name=file)
 
 
 
-# ---------- Teacher Dashboard ----------
+# ---------------- TEACHER DASHBOARD ----------------
 
 st.sidebar.title("Teacher Dashboard")
 
@@ -189,4 +234,4 @@ if st.sidebar.checkbox("Show Results"):
 
     for s in students:
 
-        st.sidebar.write(s, students[s])
+        st.sidebar.write(f"{s} : {students[s]}/15")
